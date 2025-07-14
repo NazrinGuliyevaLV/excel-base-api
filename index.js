@@ -1,39 +1,47 @@
 const express = require('express');
-const Excel   = require('exceljs');
-const path    = require('path');
+const Excel = require('exceljs');
+const fs = require('fs');
+const path = require('path');
 
-const app = express();
-app.use(express.json({ limit: '10mb' }));   // JSON + Base64 rahat sığsın
+const app = express(); 
 
 app.post('/add-image', async (req, res) => {
   try {
-    const { imageContent, fileName = 'image.jpg' } = req.body || {};
+    const { excelFileContent, imageContent, fileName } = req.body;
 
-    if (!imageContent) {
-      return res.status(400).json({ error: 'imageContent missing' });
+    if (!excelFileContent || !imageContent || !fileName) {
+      return res.status(400).json({ error: 'Missing fields in request' });
     }
+ 
+    const tempExcelPath = path.join(__dirname, 'temp-input.xlsx');
+    fs.writeFileSync(tempExcelPath, Buffer.from(excelFileContent, 'base64'));
+ 
+    const workbook = new Excel.Workbook();
+    await workbook.xlsx.readFile(tempExcelPath);
 
-    // 1) Base64 → Buffer
-    const buffer = Buffer.from(imageContent, 'base64');
-    const ext = path.extname(fileName).slice(1).toLowerCase() || 'jpg';
+    const worksheet = workbook.getWorksheet('Sheet1') || workbook.addWorksheet('Sheet1');
+ 
+    const ext = path.extname(fileName).slice(1) || 'jpeg';
+    const imageBuffer = Buffer.from(imageContent, 'base64');
 
-    // 2) Excel’i aç
-    const wb = new Excel.Workbook();
-    await wb.xlsx.readFile('Travel Form.xlsx');
-    const ws = wb.getWorksheet('Sheet1') || wb.addWorksheet('Sheet1');
+    const imageId = workbook.addImage({
+      buffer: imageBuffer,
+      extension: ext
+    });
 
-    // 3) Resmi ekle
-    const imgId = wb.addImage({ buffer, extension: ext });
-    ws.addImage(imgId, { tl: { col: 0, row: 0 }, br: { col: 2, row: 10 } });
+    worksheet.addImage(imageId, {
+      tl: { col: 0, row: 0 },
+      br: { col: 3, row: 10 }
+    });
+ 
+    const outputPath = path.join(__dirname, `output_${Date.now()}.xlsx`);
+    await workbook.xlsx.writeFile(outputPath);
 
-    // 4) Kaydet ve cevapla
-    const out = `TravelForm_${Date.now()}.xlsx`;
-    await wb.xlsx.writeFile(out);
-    res.json({ success: true, file: out });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: e.message });
+    res.json({ success: true, savedFile: path.basename(outputPath) });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
-app.listen(3000, () => console.log('API → http://localhost:3000/add-image'));
+app.listen(3000, () => console.log('API listening on http://localhost:3000'));
