@@ -2,9 +2,17 @@ const express = require('express');
 const Excel = require('exceljs');
 const fs = require('fs');
 const path = require('path');
+const bodyParser = require('body-parser')
+
+
 
 const app = express(); 
 
+
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+app.use(bodyParser.json());
 app.post('/add-image', async (req, res) => {
   try {
     const { excelFileContent, imageContent, fileName } = req.body;
@@ -19,7 +27,7 @@ app.post('/add-image', async (req, res) => {
     const workbook = new Excel.Workbook();
     await workbook.xlsx.readFile(tempExcelPath);
 
-    const worksheet = workbook.getWorksheet('Sheet1') || workbook.addWorksheet('Sheet1');
+    const worksheet = workbook.getWorksheet('form') || workbook.addWorksheet('form');
  
     const ext = path.extname(fileName).slice(1) || 'jpeg';
     const imageBuffer = Buffer.from(imageContent, 'base64');
