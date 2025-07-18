@@ -32,15 +32,21 @@ app.post('/add-image', async (req, res) => {
     const ext = path.extname(fileName).slice(1) || 'jpeg';
     const imageBuffer = Buffer.from(imageContent, 'base64');
 
-    const imageId = workbook.addImage({
-      buffer: imageBuffer,
-      extension: ext
-    });
+   
 
-    worksheet.addImage(imageId, {
-      tl: { col: 0, row: 0 },
-      br: { col: 3, row: 10 }
-    });
+    const imageId = workbook.addImage({
+  buffer: imageBuffer,
+  extension: ext
+});
+ 
+worksheet.getRow(9).height = 80;
+worksheet.getColumn(2).width = 25;
+ 
+worksheet.addImage(imageId, {
+  tl: { col: 1, row: 8 },  
+  ext: { width: 150, height: 100 }
+});
+ 
  
     const outputPath = path.join(__dirname, `output_${Date.now()}.xlsx`);
     await workbook.xlsx.writeFile(outputPath);
