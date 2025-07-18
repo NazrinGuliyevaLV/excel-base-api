@@ -43,7 +43,7 @@ worksheet.getRow(9).height = 80;
 worksheet.getColumn(2).width = 25;
  
 worksheet.addImage(imageId, {
-  tl: { col: 1, row: 8 },  
+  tl: { col: 1, row: 46 },  
   ext: { width: 150, height: 100 }
 });
  
