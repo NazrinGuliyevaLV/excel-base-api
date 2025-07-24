@@ -27,7 +27,7 @@ app.post('/add-image', async (req, res) => {
     const workbook = new Excel.Workbook();
     await workbook.xlsx.readFile(tempExcelPath);
 
-    const worksheet = workbook.getWorksheet('form') || workbook.addWorksheet('form');
+    const worksheet = workbook.getWorksheet('Sheet1') || workbook.addWorksheet('Sheet1');
 
     const ext = path.extname(fileName).slice(1) || 'jpeg';
     const imageBuffer = Buffer.from(imageContent, 'base64');
