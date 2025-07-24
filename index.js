@@ -29,7 +29,7 @@ app.post('/add-image', async (req, res) => {
 
     const worksheet = workbook.getWorksheet('Sheet1') || workbook.addWorksheet('Sheet1');
 
-    const ext = path.extname(fileName).slice(1) || 'jpeg';
+    const ext = path.extname(fileName).slice(1) || 'png';
     const imageBuffer = Buffer.from(imageContent, 'base64');
 
     const imageId = workbook.addImage({
