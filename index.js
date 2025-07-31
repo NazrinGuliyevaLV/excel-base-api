@@ -128,9 +128,13 @@ app.post('/insert-multiple-images', async (req, res) => {
         const images = [];
         for (const name of names) {
             console.log(`STEP 6: Sending '${name}' to handwriting API...`);
-            const response = await axios.post(handwritingApiUrl, { fullname: name });
-            console.log(`andwriting API response received for: ${name}`);
-            images.push(response.data);  
+           const response = await axios.post(handwritingApiUrl, { fullName: name }, {
+  responseType: 'arraybuffer'
+});
+console.log(response.data);
+const base64 = Buffer.from(response.data, 'binary').toString('base64');
+images.push(base64);
+
         }
 
         const imageSize = { width: 200, height: 50 }; 
