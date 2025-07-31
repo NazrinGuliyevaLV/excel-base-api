@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json({ limit: '20mb' }));
 
 const tempDir = os.tmpdir();
-const handwritingApiUrl = 'https://createsignature.onrender.com/handwriting';
+const handwritingApiUrl = 'https://createsignature.onrender.com/handwriting'; 
 
 const randomName = (len) => {
     let name = '';
@@ -23,7 +23,7 @@ app.post('/insert-multiple-images', async (req, res) => {
     try {
         console.log('STEP 1: Request received');
 
-        const { w, h, x, y, a, b, excelFileContent, sheet } = req.body;
+        const {w,h,x,y,a,b, excelFileContent, sheet } = req.body;
 
         if (!excelFileContent) {
             console.log('Missing excelFileContent');
@@ -36,9 +36,9 @@ app.post('/insert-multiple-images', async (req, res) => {
 
         const workbook = new Excel.Workbook();
         await workbook.xlsx.readFile(inputPath);
-        console.log('STEP 3: Excel file loaded');
+        console.log('sTEP 3: Excel file loaded');
 
-        const worksheet = workbook.getWorksheet(sheet || 1);
+        const worksheet = workbook.getWorksheet(sheet || 1);  
         if (!worksheet) {
             console.log('Worksheet not found');
             return res.status(400).json({ error: 'Worksheet not found' });
@@ -59,15 +59,19 @@ app.post('/insert-multiple-images', async (req, res) => {
         const images = [];
         for (const name of names) {
             console.log(`STEP 6: Sending '${name}' to handwriting API...`);
-            const response = await axios.post(handwritingApiUrl, { fullname: name }, {
-                responseType: 'arraybuffer'
-            });
-            const base64 = Buffer.from(response.data, 'binary').toString('base64');
-            images.push(base64);
+           const response = await axios.post(handwritingApiUrl, { fullname: name }, {
+  responseType: 'arraybuffer'
+});
+console.log(response.data);
+const base64 = Buffer.from(response.data, 'binary').toString('base64');
+images.push(base64);
+
         }
 
-        const imageSize = { width: w, height: h };
-        let currentX = x;
+        
+
+        const imageSize = { width: w, height: h }; 
+         let currentX = x;
         let currentY = y;
 
         for (let i = 0; i < images.length; i++) {
@@ -78,12 +82,13 @@ app.post('/insert-multiple-images', async (req, res) => {
             });
 
             worksheet.addImage(imageId, {
-                tl: { col: currentX, row: currentY },
+                tl: { col: currentX, row: currentY }, 
                 ext: imageSize
             });
 
             console.log(`STEP 7: Image ${i + 1} added at col ${currentX}, row ${currentY}`);
 
+            // Sonraki resim için konumu güncelle
             currentX += a;
             currentY += b;
         }
