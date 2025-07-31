@@ -78,7 +78,7 @@ const app = express();
 app.use(express.json({ limit: '20mb' }));
 
 const tempDir = os.tmpdir();
-const handwritingApiUrl = 'https://2e1b0b71c7c0.ngrok-free.app/api/Signatures'; 
+const handwritingApiUrl = 'https://d9f84d974554.ngrok-free.app/api/Signatures'; 
 
 const randomName = (len) => {
     let name = '';
