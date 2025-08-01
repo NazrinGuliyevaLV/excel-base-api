@@ -69,7 +69,7 @@ images.push(base64);
         }
 
         const imageSize = { width: 100, height: 30 }; 
-        let startRow = 1;
+        let startRow = 0;
         for (let i = 0; i < images.length; i++) {
             const imgBuffer = Buffer.from(images[i], 'base64');
             const imageId = workbook.addImage({
@@ -83,7 +83,7 @@ images.push(base64);
             });
 
             console.log(`STEP 7: Image ${i + 1} added at row ${startRow}`);
-            startRow += 2; 
+            startRow += 1; 
         }
 
         const outputPath = path.join(tempDir, `output-${randomName(10)}.xlsx`);
