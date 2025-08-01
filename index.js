@@ -68,7 +68,7 @@ images.push(base64);
 
         }
 
-        const imageSize = { width: 200, height: 50 }; 
+        const imageSize = { width: 100, height: 30 }; 
         let startRow = 1;
         for (let i = 0; i < images.length; i++) {
             const imgBuffer = Buffer.from(images[i], 'base64');
