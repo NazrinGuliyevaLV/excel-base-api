@@ -23,7 +23,7 @@ app.post('/insert-multiple-images', async (req, res) => {
     try {
         console.log('STEP 1: Request received');
 
-        const { excelFileContent, sheet } = req.body;
+        const {w,h,x,y,a,b, excelFileContent, sheet } = req.body;
 
         if (!excelFileContent) {
             console.log('Missing excelFileContent');
@@ -67,9 +67,10 @@ const base64 = Buffer.from(response.data, 'binary').toString('base64');
 images.push(base64);
 
         }
-
-        const imageSize = { width: 100, height: 30 }; 
-        let startRow = 0;
+//w-100 h-30 x-0 y-2 a-1 b-0
+        const imageSize = { width: w, height: h }; 
+        let startRow = x;
+        let startColumn = y;
         for (let i = 0; i < images.length; i++) {
             const imgBuffer = Buffer.from(images[i], 'base64');
             const imageId = workbook.addImage({
@@ -78,12 +79,13 @@ images.push(base64);
             });
 
             worksheet.addImage(imageId, {
-                tl: { col: 2, row: startRow }, 
+                tl: { col: startColumn, row: startRow }, 
                 ext: imageSize
             });
 
             console.log(`STEP 7: Image ${i + 1} added at row ${startRow}`);
-            startRow += 1; 
+            startRow += a; 
+            startColumn+=b;
         }
 
         const outputPath = path.join(tempDir, `output-${randomName(10)}.xlsx`);
