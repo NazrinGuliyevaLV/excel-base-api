@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json({ limit: '20mb' }));
 
 const tempDir = os.tmpdir();
-const handwritingApiUrl = 'https://createsignature.onrender.com/handwriting'; 
+const handwritingApiUrl = 'https://createsignature-a8cxemc8gkakanav.westeurope-01.azurewebsites.net/api/createsignature'; 
 
 const randomName = (len) => {
     let name = '';
