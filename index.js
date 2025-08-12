@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json({ limit: '20mb' }));
 
 const tempDir = os.tmpdir();
-const handwritingApiUrl = 'https://createsignature-q0vi.onrender.com/createSignature'; 
+const handwritingApiUrl = 'https://createsignature-q0vi.onrender.com/createSignature';
 
 const randomName = (len) => {
     let name = '';
@@ -23,7 +23,7 @@ app.post('/insert-multiple-images', async (req, res) => {
     try {
         console.log('STEP 1: Request received');
 
-        const {x,y,a,b, excelFileContent, sheet } = req.body;
+        const { x, y, a, b, excelFileContent, sheet } = req.body;
 
         if (!excelFileContent) {
             console.log('Missing excelFileContent');
@@ -38,7 +38,7 @@ app.post('/insert-multiple-images', async (req, res) => {
         await workbook.xlsx.readFile(inputPath);
         console.log('sTEP 3: Excel file loaded');
 
-        const worksheet = workbook.getWorksheet(sheet || 1);  
+        const worksheet = workbook.getWorksheet(sheet || 1);
         if (!worksheet) {
             console.log('Worksheet not found');
             return res.status(400).json({ error: 'Worksheet not found' });
@@ -59,16 +59,16 @@ app.post('/insert-multiple-images', async (req, res) => {
         const images = [];
         for (const name of names) {
             console.log(`STEP 6: Sending '${name}' to handwriting API...`);
-           const response = await axios.post(handwritingApiUrl, { name: name }, {
-  responseType: 'arraybuffer'
-});
-console.log(response.data);
-const base64 = Buffer.from(response.data, 'binary').toString('base64');
-images.push(base64);
+            const response = await axios.post(handwritingApiUrl, { name: name }, {
+                responseType: 'arraybuffer'
+            });
+            console.log(response.data);
+            const base64 = Buffer.from(response.data, 'binary').toString('base64');
+            images.push(base64);
 
         }
-//w-100 h-30 x-0 y-2 a-1 b-0
-        const imageSize = { width: 150, height: 30 }; 
+        //w-100 h-30 x-0 y-2 a-1 b-0 
+        const imageSize = { width: 150, height: 30 };
         let startRow = x;
         let startColumn = y;
         for (let i = 0; i < images.length; i++) {
@@ -79,16 +79,16 @@ images.push(base64);
             });
 
             worksheet.addImage(imageId, {
-                tl: { col: startColumn, row: startRow }, 
+                tl: { col: startColumn, row: startRow },
                 ext: imageSize
             });
 
             console.log(`STEP 7: Image ${i + 1} added at row ${startRow}`);
-            startRow += a; 
-            startColumn+=b;
+            startRow += a;
+            startColumn += b;
         }
 
-        const outputPath = path.join(tempDir, `output-${randomName(10)}.xlsx`);
+        const outputPath = `output-${randomName(10)}.xlsx`;
         await workbook.xlsx.writeFile(outputPath);
         console.log('STEP 8: Output Excel saved:', outputPath);
 
