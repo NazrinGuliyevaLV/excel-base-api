@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json({ limit: '20mb' }));
 
 const tempDir = os.tmpdir();
-const handwritingApiUrl = 'https://createsignature-a8cxemc8gkakanav.westeurope-01.azurewebsites.net/api/createsignature'; 
+const handwritingApiUrl = 'https://createsignature-q0vi.onrender.com/createSignature'; 
 
 const randomName = (len) => {
     let name = '';
@@ -23,7 +23,7 @@ app.post('/insert-multiple-images', async (req, res) => {
     try {
         console.log('STEP 1: Request received');
 
-        const {w,h,x,y,a,b, excelFileContent, sheet } = req.body;
+        const {x,y,a,b, excelFileContent, sheet } = req.body;
 
         if (!excelFileContent) {
             console.log('Missing excelFileContent');
@@ -59,7 +59,7 @@ app.post('/insert-multiple-images', async (req, res) => {
         const images = [];
         for (const name of names) {
             console.log(`STEP 6: Sending '${name}' to handwriting API...`);
-           const response = await axios.post(handwritingApiUrl, { fullname: name }, {
+           const response = await axios.post(handwritingApiUrl, { name: name }, {
   responseType: 'arraybuffer'
 });
 console.log(response.data);
@@ -68,7 +68,7 @@ images.push(base64);
 
         }
 //w-100 h-30 x-0 y-2 a-1 b-0
-        const imageSize = { width: w, height: h }; 
+        const imageSize = { width: 150, height: 30 }; 
         let startRow = x;
         let startColumn = y;
         for (let i = 0; i < images.length; i++) {
